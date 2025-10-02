@@ -46,9 +46,16 @@ public class VideoProcessor
     {
         var mediaInfoWrapper = new MediaInfoWrapper(filePath);
 
+        if (mediaInfoWrapper.Success)
+        {
+            Console.WriteLine("Media info loaded successfully.");
+        }
+
         var video = mediaInfoWrapper.VideoStreams.Count > 0 ? mediaInfoWrapper.VideoStreams[0] : null;
         if (video == null)
             return false;
+
+        
 
         int width = video.Width;
         int height = video.Height;
