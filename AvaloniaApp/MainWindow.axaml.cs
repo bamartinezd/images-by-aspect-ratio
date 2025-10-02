@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Platform.Storage;
 using DeepBulkImageFiltering.ImageProcessing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
@@ -29,32 +30,39 @@ public partial class MainWindow : Window
 
     private async void OnSelectSourceFolder(object sender, RoutedEventArgs args)
     {
-        var dialog = new OpenFolderDialog
-        {
-            Title = "Select Source Folder"
-        };
-
-        var result = await dialog.ShowAsync(this);
-        if (!string.IsNullOrEmpty(result))
-        {
-            _sourcePath = result;
-            SourcePathText.Text = result;
-            UpdateUI();
-        }
+        await SelectFolderAsync(
+            "Select Source Folder",
+            result => {
+                _sourcePath = result;
+                SourcePathText.Text = result;
+            });
     }
 
     private async void OnSelectDestinationFolder(object sender, RoutedEventArgs args)
     {
-        var dialog = new OpenFolderDialog
-        {
-            Title = "Select Destination Folder"
-        };
+        await SelectFolderAsync(
+            "Select Destination Folder",
+            result => {
+                _destinationPath = result;
+                DestinationPathText.Text = result;
+            });
+    }
 
-        var result = await dialog.ShowAsync(this);
+    private async Task SelectFolderAsync(string title, Action<string> setPathAction)
+    {
+        var storageProvider = StorageProvider;
+        var folders = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        {
+            Title = title,
+            AllowMultiple = false
+        });
+
+        var firstFolder = folders.FirstOrDefault();
+        var result = firstFolder != null ? firstFolder.Path.LocalPath : null;
+
         if (!string.IsNullOrEmpty(result))
         {
-            _destinationPath = result;
-            DestinationPathText.Text = result;
+            setPathAction(result);
             UpdateUI();
         }
     }
