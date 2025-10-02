@@ -26,7 +26,10 @@ public class Program
             destinationPath = Console.ReadLine();
         }
 
-        var imageProcessor = new ImageProcessor(sourcePath, destinationPath);
-        imageProcessor.ProcessImages();
+        // var imageProcessor = new ImageProcessor(sourcePath, destinationPath);
+        // imageProcessor.ProcessImages();
+
+        var videoProcessor = new VideoProcessor(sourcePath, destinationPath);
+        videoProcessor.ProcessVideos();
     }
 }

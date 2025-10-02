@@ -16,7 +16,10 @@ public class ImageProcessor
 
     public void ProcessImages()
     {
-        var filePaths = Directory.EnumerateFiles(_sourcePath, "*.jpg", SearchOption.AllDirectories).ToList();
+    var supportedExtensions = new[] { "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.tiff" };
+        var filePaths = supportedExtensions
+            .SelectMany(ext => Directory.EnumerateFiles(_sourcePath, ext, SearchOption.AllDirectories))
+            .ToList();
         int totalImages = filePaths.Count;
         int processedImages = 0;
         int copiedImages = 0;
